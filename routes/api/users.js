@@ -3,6 +3,8 @@ import { check, validationResult } from 'express-validator';
 import Users from '../../model/Users.js';
 import bcrypt from 'bcryptjs';
 import gravatar from 'gravatar';
+import jwt from 'jsonwebtoken';
+import config from 'config';
 
 const router = express.Router();
 //@route    POST api/users
@@ -38,11 +40,26 @@ try {
     const salt = await bcrypt.genSalt(10)
 
     user.password = await bcrypt.hash(password, salt)
-    await user.save()   
+    await user.save();   
     
     
     //Return JWT
-    res.send('User Registered');
+
+    const payload = {
+        user: {
+        id: user.id
+        }
+    };
+
+    jwt.sign(
+        payload, 
+        config.get('jwtSecret'), 
+        { expiresIn: 360000 }
+        , (err, token) => {
+            if(err) throw err;
+            res.json({token})
+        }
+        )
 }
 catch(err){
     console.error(err.message);
