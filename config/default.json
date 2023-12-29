@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://aanglin07:test_database@socialmedia.v8fcz9c.mongodb.net/?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://aanglin07:test_database@socialmedia.v8fcz9c.mongodb.net/?retryWrites=true&w=majority",
+    "jwtSecret":"mysecrettoken"
 }
