@@ -24,6 +24,10 @@ router.get('/me', jwtVerify, async (req, res) => {
 
 })
 
+//@route    POST api/profile/
+//@desc     Create or update profile
+//access    Private
+
 router.post('/', [
     jwtVerify,
     [
