@@ -1,8 +1,10 @@
 import express from 'express';
 import jwtVerify from '../../middleware/auth.js';
 import Profile from '../../model/Profile.js';
+import { check, validationResult } from 'express-validator';
 import User from '../../model/Users.js';
 import { check, validationResult } from 'express-validator';
+
 
 const router = express.Router();
 //@route    GET api/profile/me
@@ -100,8 +102,8 @@ router.post('/', [
         console.error(err.message);
         res.status(500).send('Server Error');
     }
-});
-
+}
+            
 //@route    GET api/profile/
 //@desc     Get all profile
 //access    Public
