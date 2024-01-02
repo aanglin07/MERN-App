@@ -2,6 +2,7 @@ import express from 'express';
 import jwtVerify from '../../middleware/auth.js';
 import Profile from '../../model/Profile.js';
 import User from '../../model/Users.js';
+import { check, validationResult } from 'express-validator';
 
 const router = express.Router();
 //@route    GET api/profile/me
