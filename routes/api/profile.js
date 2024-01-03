@@ -143,4 +143,24 @@ router.get('/user/:user_id', async(req, res) => {
     }
 })
 
+//@route    Delete api/profile/
+//@desc     Delete profile
+//access    Private
+
+router.delete('/', jwtVerify, async(req, res) => {
+    try {
+        //@todo - remove users posts
+        //@todo - remove profile
+        await Profile.findOneAndDelete({user: req.user.id});
+        //@todo - remove users comments        
+        await User.findOneAndDelete({_id: req.user.id})        
+        res.json({msg: 'User deleted'})
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+        }
+    })
+
+
+
 export default router;
