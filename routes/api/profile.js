@@ -208,8 +208,30 @@ router.put('/experience', [jwtVerify, [
         console.error(error.message);
         res.status(500).send('Server Error');
     }
-    }
-    )
+    })
+
+    //@route    DELETE api/profile/experience
+    //@desc     Delete profile experience
+    //access    Private
+
+    router.delete('/experience/:exp_id', [jwtVerify], async(req, res) =>
+    {
+        try {
+            const profile = await Profile.findOne({user: req.user.id}) //gets profile by user id
+
+            //Get remove index(The experience we need to remove)
+            const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
+
+            profile.experience.splice(removeIndex, 1);
+
+            await profile.save();
+
+            res.json(profile)
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).send('Server Error');
+        }
+    })
 
 
 export default router;
