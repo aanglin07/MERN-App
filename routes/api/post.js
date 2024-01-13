@@ -41,7 +41,7 @@ router.get('/:id', jwtVerify, async (req, res) =>
 })
 
 
-//@route    POST api/post
+//@route    POST api/post/:id
 //@desc     Create a post
 //access    Private
 
@@ -77,5 +77,34 @@ router.post('/', [
         res.status(500).send('Server Error');
     }
 })  
+
+//@route    DELETE api/post/:id
+//@desc     DELETE a post
+//access    Private
+
+router.delete('/:id',[jwtVerify], async (req, res) =>{
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' }
+            );
+            }
+            //Check user
+            if (post.user.toString() !== req.user.id) {
+                return res.status(401).json({ msg: 'User not authorized' });
+                }
+
+            await Post.findOneAndDelete({_id: req.params.id});
+            res.json({ msg: 'Post removed' });
+            }
+            catch (err) {
+                if (err.kind === 'ObjectId') {
+                    return res.status(404).json({ msg: 'Post not found' }
+                    );
+            }
+            console.error(err.message);
+            res.status(500).send('Server Error');
+        }
+})
 
 export default router;
