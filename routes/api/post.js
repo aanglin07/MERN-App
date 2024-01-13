@@ -8,18 +8,40 @@ import User from '../../model/Users.js';
 const router = express.Router();
 //@route    GET api/post
 //@desc     Get all posts
-//access    Public
-router.get('/', async (req, res) =>
+//access    Private
+router.get('/', jwtVerify, async (req, res) =>
 {
     try {
-        const posts = await Post.find().sort({ date: -1 });
+        const posts = await Post.find().sort({ date: -1 }); //(date: -1) Gets the most recent post
         res.json(posts);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
-//@route    POST api/post
+
+//@route    GET api/post
+//@desc     Get post by ID
+//access    Private
+router.get('/:id', jwtVerify, async (req, res) =>
+{
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+            }
+            res.json(post);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind == 'ObjectId') {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+        res.status(500).send('Server Error');
+    }
+})
+
+
+//@route    POST api/post/:id
 //@desc     Create a post
 //access    Private
 
@@ -55,5 +77,34 @@ router.post('/', [
         res.status(500).send('Server Error');
     }
 })  
+
+//@route    DELETE api/post/:id
+//@desc     DELETE a post
+//access    Private
+
+router.delete('/:id',[jwtVerify], async (req, res) =>{
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' }
+            );
+            }
+            //Check user
+            if (post.user.toString() !== req.user.id) {
+                return res.status(401).json({ msg: 'User not authorized' });
+                }
+
+            await Post.findOneAndDelete({_id: req.params.id});
+            res.json({ msg: 'Post removed' });
+            }
+            catch (err) {
+                if (err.kind === 'ObjectId') {
+                    return res.status(404).json({ msg: 'Post not found' }
+                    );
+            }
+            console.error(err.message);
+            res.status(500).send('Server Error');
+        }
+})
 
 export default router;
